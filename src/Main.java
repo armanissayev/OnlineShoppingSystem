@@ -30,6 +30,7 @@ public class Main {
                 break;
             default:
                 System.out.println("Unknown action");
+                break;
         }
     }
 }
