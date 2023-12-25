@@ -8,9 +8,6 @@ public class User {
     private double balance;
     private ArrayList<Order> list = new ArrayList<Order>();
 
-    public User() {
-    }
-
     public User(int id, String name, Double balance) {
         this.id = id;
         this.name = name;
