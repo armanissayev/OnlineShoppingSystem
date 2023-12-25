@@ -4,6 +4,14 @@ public class Main {
         Scanner scan = new Scanner(System.in);
 
         System.out.println("Select action: ");
+        System.out.println("1) To show products list");
+        System.out.println("2) To add a product");
+        System.out.println("3) To add a new user");
+        System.out.println("4) To buy product");
+        System.out.println("5) To return a product");
+        System.out.println("6) To show all users");
+        System.out.println("7) To show the certain user’s orders");
+        
         int action = scan.nextInt();
 
         switch (action) {
