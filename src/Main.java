@@ -22,7 +22,25 @@ public class Main {
                 //Your code 2
                 break;
             case 3:
-                //Your code 3
+                System.out.println("Enter your id: ");
+                int id = scan.nextInt();
+
+                String username;
+                do {
+                    System.out.println("Enter username: ");
+                    username = scan.nextLine();
+                } while (username.isEmpty());
+
+                System.out.println("Enter your balance: ");
+                double money = scan.nextDouble();
+
+                User user = new User(id, username, money);
+
+                System.out.println("Checking...");
+                System.out.println("UserId: " + user.getId());
+                System.out.println("Username: " + user.getName());
+                System.out.println("Balance: " + user.getBalance());
+                System.out.println("You have successfully signed in!");
                 break;
             case 4:
                 //Your code 4
