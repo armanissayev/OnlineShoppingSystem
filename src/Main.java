@@ -40,9 +40,6 @@ public class Main {
                     User user = new User(id, username, money);
 
                     System.out.println("Checking...");
-                    System.out.println("UserId: " + user.getId());
-                    System.out.println("Username: " + user.getName());
-                    System.out.println("Balance: " + user.getBalance());
                     System.out.println("You have successfully signed in!\n\n");
                     break;
                 case 4:
