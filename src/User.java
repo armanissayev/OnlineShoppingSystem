@@ -16,7 +16,7 @@ public class User {
     }
 
     //getters and setters
-    public double getId() {
+    public int getId() {
         return id;
     }
     public void setId(int id) {
