@@ -11,10 +11,21 @@ public class Main {
         }
         System.out.print("\n\n");
     }
+    private static void printProducts(ArrayList<Product> products) {
+        for (Product value : products) {
+            String name = value.getName();
+            double price = value.getPrice();
+            int quantity = value.getQuantity();
+            String description = value.getDescription();
+            System.out.printf("%s - %f - %d:\n%s", name, price, quantity, description);
+        }
+        System.out.print("\n\n");
+    }
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
         int count = 0;
         ArrayList<User> userList = new ArrayList<User>();
+        ArrayList<Product> products = new ArrayList<Product>();
         while (true) {
             System.out.println("Select action: ");
             System.out.println("1) To show products list");
@@ -31,7 +42,7 @@ public class Main {
 
             switch (action) {
                 case 1:
-                    //Your code 1
+                    printProducts(products);
                     break;
                 case 2:
                     System.out.print("Enter the name of the product: ");
@@ -41,15 +52,23 @@ public class Main {
                     } while(name.isEmpty());
 
                     System.out.print("Enter the price of new product: ");
-                    double price = scan.nextInt();
-
+                    double price = scan.nextDouble();
+                    System.out.print("Enter the amount of products: ");
+                    int quantity = scan.nextInt();
+                    System.out.print("Input the description of the product in one line: ");
+                    String description = "";
+                    while(description.isEmpty()) {
+                        description = scan.nextLine();
+                    }
+                    Product product = new Product(name, price, quantity, description);
+                    products.add(product);
                     break;
                 case 3:
-                    String username;
+                    String username = "";
                     System.out.print("Enter username: ");
-                    do {
+                    while (username.isEmpty()) {
                         username = scan.nextLine();
-                    } while (username.isEmpty());
+                    }
 
                     System.out.print("Enter your balance: ");
                     double money = scan.nextDouble();
@@ -79,10 +98,10 @@ public class Main {
                     System.out.println("Unknown action!");
             }
             System.out.print("Continue? [Y/N]\n");
-            String res = scan.nextLine();
-            do {
+            String res = "";
+            while (res.isEmpty()) {
                 res = scan.nextLine();
-            } while (res.isEmpty());
+            }
             if (!Objects.equals(res, "Y")) break;
         }
     }
