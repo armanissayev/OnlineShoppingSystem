@@ -21,4 +21,8 @@ public class Product {
     public double getPrice() {return Price;}
     public int getQuantity() {return Quantity;}
     public String getDescription() {return Description;}
+
+    public double getTotalCost(int quantity) {
+        return Price * quantity;
+    }
 }
