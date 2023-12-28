@@ -80,7 +80,44 @@ public class Main {
                     System.out.println("The new user added successfully!\n\n");
                     break;
                 case 4:
-                    //Your code 4
+                    User currentUser = userList.get(userList.size() - 1);
+
+                    System.out.println("User: " + currentUser.getName() + ", Balance: " + currentUser.getBalance());
+
+                    System.out.println("Enter the product ID: ");
+                    int productId = scan.nextInt();
+
+                    Product selectedProduct = null;
+                    for (Product prod: products) {
+                        if (prod.getId() == productId) {
+                            selectedProduct = prod;
+                            break;
+                        }
+                    }
+
+                    //if the product is found
+                    if (selectedProduct != null) {
+                        System.out.println("Product selected: " + selectedProduct.getName());
+                        System.out.println("Enter quantity to buy: ");
+                        int quantityToBuy = scan.nextInt();
+
+                        if (quantityToBuy <= selectedProduct.getQuantity()) {
+                            double totalCost = selectedProduct.getTotalCost(quantityToBuy);
+
+                            if (totalCost <= currentUser.getBalance()) {
+                                selectedProduct.setQuantity(selectedProduct.getQuantity() - quantityToBuy);
+                                currentUser.deductBalance(totalCost);
+
+                                System.out.println("Purchase successful! Total cost: " + totalCost);
+                            } else {
+                                System.out.println("Not enough balance to make the purchase.");
+                            }
+                        } else {
+                            System.out.println("Not enough stock available for the selected product.");
+                        }
+                    } else {
+                        System.out.println("Product not found with the given ID.");
+                    }
                     break;
                 case 5:
                     //Your code 5
