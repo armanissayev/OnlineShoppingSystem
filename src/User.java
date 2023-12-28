@@ -36,4 +36,8 @@ public class User {
     public void setBalance(double balance) {
         this.balance = balance;
     }
+
+    public void deductBalance(double totalCost) {
+        balance -= totalCost;
+    }
 }
