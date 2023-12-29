@@ -3,15 +3,18 @@ import java.util.Objects;
 import java.util.Scanner;
 public class Main {
     private static void printUsers(ArrayList<User> userList) {
+        System.out.println("--------------------------------------------------");
         for (User value : userList) {
             int id = (int) value.getId();
             String name = value.getName();
             double balance = value.getBalance();
             System.out.printf("%d - %s - %f\n", id, name, balance);
         }
-        System.out.print("\n\n");
+        System.out.println("--------------------------------------------------");
+        System.out.print("\n");
     }
     private static void printProducts(ArrayList<Product> products) {
+        System.out.println("--------------------------------------------------");
         for (Product value : products) {
             int id = value.getId();
             String name = value.getName();
@@ -20,7 +23,19 @@ public class Main {
             String description = value.getDescription();
             System.out.printf("%d - %s - %f - %d:\n%s", id, name, price, quantity, description);
         }
-        System.out.print("\n\n");
+        System.out.print("\n");
+    }
+    private static void printOrders(ArrayList<Order> orders) {
+        System.out.println("--------------------------------------------------");
+        for (Order value : orders) {
+            int id = value.getUserId();
+            String name = value.getProductName();
+            double sum = value.getTotalSum();
+            int quantity = value.getQuantity();
+            System.out.printf("%d - %s - %f - %d:\n", id, name, sum, quantity);
+        }
+        System.out.println("--------------------------------------------------");
+        System.out.print("\n");
     }
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
@@ -28,7 +43,9 @@ public class Main {
         int countProductId = 0;
         ArrayList<User> userList = new ArrayList<User>();
         ArrayList<Product> products = new ArrayList<Product>();
+        ArrayList<Order> orders = new ArrayList<Order>();
         while (true) {
+            System.out.println("--------------------------------------------------");
             System.out.println("Select action: ");
             System.out.println("1) To show products list");
             System.out.println("2) To add a product");
@@ -82,20 +99,27 @@ public class Main {
                     System.out.println("The new user added successfully!\n\n");
                     break;
                 case 4:
-                    User currentUser = userList.get(userList.size() - 1);
+                    System.out.print("Enter the name of username to create an order: ");
+                    int userId = scan.nextInt();
+                    while (userId >= userList.size()) {
+                        System.out.print("There is no user with such id, enter it again: ");
+                        userId = scan.nextInt();
+                    }
+                    User currentUser = userList.get(userId);
+
+                    printProducts(products);
 
                     System.out.println("User: " + currentUser.getName() + ", Balance: " + currentUser.getBalance());
+                    System.out.println("--------------------------------------------------");
 
                     System.out.println("Enter the product ID: ");
                     int productId = scan.nextInt();
-
-                    Product selectedProduct = null;
-                    for (Product prod: products) {
-                        if (prod.getId() == productId) {
-                            selectedProduct = prod;
-                            break;
-                        }
+                    while (productId >= countProductId) {
+                        System.out.print("There is no product with such id, enter it again: ");
+                        productId = scan.nextInt();
                     }
+
+                    Product selectedProduct = findProductById(products, productId);
 
                     //if the product is found
                     if (selectedProduct != null) {
@@ -112,6 +136,7 @@ public class Main {
 
                                 Order order = new Order((int)currentUser.getId(), selectedProduct.getName(), quantityToBuy, totalCost);
                                 currentUser.addOrder(order);
+                                orders.add(order);
 
                                 System.out.println("Purchase successful! Total cost: " + totalCost);
                             } else {
@@ -131,7 +156,7 @@ public class Main {
                     printUsers(userList);
                     break;
                 case 7:
-                    viewLastOrders(userList);
+                    printOrders(orders);
                     break;
                 case 8:
                     System.out.println("Exit in progress...");
@@ -148,6 +173,7 @@ public class Main {
                 System.out.println("Exit in progress...");
                 break;
             }
+            System.out.println("--------------------------------------------------");
         }
     }
 
