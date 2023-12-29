@@ -190,14 +190,4 @@ public class Main {
         }
         return null;
     }
-
-    public static void viewLastOrders(ArrayList<User> userList) {
-        User lastUser = userList.get(userList.size() - 1);
-        System.out.println("Last User's Orders:");
-        for (Order order : lastUser.getOrders()) {
-            System.out.println("Product: " + order.getProductName() +
-                    ", Quantity: " + order.getQuantity() +
-                    ", Total Cost: " + order.calculateTotalCost());
-        }
-    }
 }
