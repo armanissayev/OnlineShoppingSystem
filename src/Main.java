@@ -4,7 +4,7 @@ import java.util.Scanner;
 public class Main {
     private static void printUsers(ArrayList<User> userList) {
         for (User value : userList) {
-            int id = value.getId();
+            int id = (int) value.getId();
             String name = value.getName();
             double balance = value.getBalance();
             System.out.printf("%d - %s - %f\n", id, name, balance);
@@ -13,17 +13,19 @@ public class Main {
     }
     private static void printProducts(ArrayList<Product> products) {
         for (Product value : products) {
+            int id = value.getId();
             String name = value.getName();
             double price = value.getPrice();
             int quantity = value.getQuantity();
             String description = value.getDescription();
-            System.out.printf("%s - %f - %d:\n%s", name, price, quantity, description);
+            System.out.printf("%d - %s - %f - %d:\n%s", id, name, price, quantity, description);
         }
         System.out.print("\n\n");
     }
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
-        int count = 0;
+        int countUserId = 0;
+        int countProductId = 0;
         ArrayList<User> userList = new ArrayList<User>();
         ArrayList<Product> products = new ArrayList<Product>();
         while (true) {
@@ -60,7 +62,7 @@ public class Main {
                     while(description.isEmpty()) {
                         description = scan.nextLine();
                     }
-                    Product product = new Product(name, price, quantity, description);
+                    Product product = new Product(++countProductId, name, price, quantity, description);
                     products.add(product);
                     break;
                 case 3:
@@ -73,7 +75,7 @@ public class Main {
                     System.out.print("Enter your balance: ");
                     double money = scan.nextDouble();
 
-                    User user = new User(++ count, username, money);
+                    User user = new User(++countUserId, username, money);
                     userList.add(user);
 
                     System.out.println("Checking...");
@@ -108,6 +110,9 @@ public class Main {
                                 selectedProduct.setQuantity(selectedProduct.getQuantity() - quantityToBuy);
                                 currentUser.deductBalance(totalCost);
 
+                                Order order = new Order((int)currentUser.getId(), selectedProduct.getName(), quantityToBuy, totalCost);
+                                currentUser.addOrder(order);
+
                                 System.out.println("Purchase successful! Total cost: " + totalCost);
                             } else {
                                 System.out.println("Not enough balance to make the purchase.");
@@ -120,13 +125,13 @@ public class Main {
                     }
                     break;
                 case 5:
-                    //Your code 5
+                    returnProduct(userList, products, scan);
                     break;
                 case 6:
                     printUsers(userList);
                     break;
                 case 7:
-                    //Your code 7
+                    viewLastOrders(userList);
                     break;
                 case 8:
                     System.out.println("Exit in progress...");
@@ -139,7 +144,60 @@ public class Main {
             while (res.isEmpty()) {
                 res = scan.nextLine();
             }
-            if (!Objects.equals(res, "Y")) break;
+            if (!Objects.equals(res, "Y")) {
+                System.out.println("Exit in progress...");
+                break;
+            }
+        }
+    }
+
+    private static void returnProduct(ArrayList<User> userList, ArrayList<Product> products, Scanner scan) {
+        if (!userList.isEmpty()) {
+            User lastUser = userList.get(userList.size() - 1);
+
+            System.out.println("User: " + lastUser.getName() + ", Balance: " + lastUser.getBalance());
+
+            System.out.print("Enter the product ID to return: ");
+            int productId = scan.nextInt();
+
+            Product selectedProduct = findProductById(products, productId);
+
+            if (selectedProduct != null) {
+                System.out.println("Product selected for return: " + selectedProduct.getName());
+                System.out.print("Enter quantity to return: ");
+                int quantityToReturn = scan.nextInt();
+
+                // Increase the quantity in ArrayList<Product> products
+                selectedProduct.setQuantity(selectedProduct.getQuantity() + quantityToReturn);
+
+                // Adjust user balance or handle refunds if necessary
+                lastUser.returnBalance(selectedProduct.getTotalCost(quantityToReturn));
+
+                System.out.println("Return successful! Quantity returned: " + quantityToReturn);
+            } else {
+                System.out.println("Product not found with the given ID.");
+            }
+        } else {
+            System.out.println("No users available.");
+        }
+    }
+
+    public static Product findProductById(ArrayList<Product> products, int productId) {
+        for (Product product : products) {
+            if (product.getId() == productId) {
+                return product;
+            }
+        }
+        return null;
+    }
+
+    public static void viewLastOrders(ArrayList<User> userList) {
+        User lastUser = userList.get(userList.size() - 1);
+        System.out.println("Last User's Orders:");
+        for (Order order : lastUser.getOrders()) {
+            System.out.println("Product: " + order.getProductName() +
+                    ", Quantity: " + order.getQuantity() +
+                    ", Total Cost: " + order.calculateTotalCost());
         }
     }
 }
