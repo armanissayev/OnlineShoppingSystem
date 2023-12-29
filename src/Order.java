@@ -38,8 +38,4 @@ public class Order {
     public void setTotalSum(double totalSum) {
         this.totalSum = totalSum;
     }
-
-    public double calculateTotalCost() {
-        return quantity * product.getPrice();
-    }
 }
