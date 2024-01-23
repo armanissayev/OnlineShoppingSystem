@@ -21,7 +21,7 @@ public class Main {
             double price = value.getPrice();
             int quantity = value.getQuantity();
             String description = value.getDescription();
-            System.out.printf("%d - %s - %f - %d:\n%s", id, name, price, quantity, description);
+            System.out.printf("%d - %s - %f - %d:\n%s\n", id, name, price, quantity, description);
         }
         System.out.print("\n");
     }
@@ -99,12 +99,10 @@ public class Main {
                     System.out.println("The new user added successfully!\n\n");
                     break;
                 case 4:
-                    System.out.print("Enter the name of username to create an order: ");
+                    System.out.print("Enter your id: ");
                     int userId = scan.nextInt();
-                    while (userId >= userList.size()) {
-                        System.out.print("There is no user with such id, enter it again: ");
-                        userId = scan.nextInt();
-                    }
+                    userId--;
+
                     User currentUser = userList.get(userId);
 
                     printProducts(products);
@@ -114,10 +112,6 @@ public class Main {
 
                     System.out.println("Enter the product ID: ");
                     int productId = scan.nextInt();
-                    while (productId >= countProductId) {
-                        System.out.print("There is no product with such id, enter it again: ");
-                        productId = scan.nextInt();
-                    }
 
                     Product selectedProduct = findProductById(products, productId);
 
