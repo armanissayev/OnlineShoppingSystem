@@ -44,6 +44,7 @@ public class Main {
         ArrayList<User> userList = new ArrayList<User>();
         ArrayList<Product> products = new ArrayList<Product>();
         ArrayList<Order> orders = new ArrayList<Order>();
+        ArrayList<Integer> primary = new ArrayList<Integer>();
         while (true) {
             System.out.println("--------------------------------------------------");
             System.out.println("Select action: ");
@@ -54,7 +55,8 @@ public class Main {
             System.out.println("5) To return a product");
             System.out.println("6) To show all users");
             System.out.println("7) To show the certain user’s orders");
-            System.out.println("8) To exit");
+            System.out.println("8) To subscribe to premium");
+            System.out.println("9) To exit");
 
             System.out.print("Choice: ");
             int action = scan.nextInt();
@@ -153,6 +155,31 @@ public class Main {
                     printOrders(orders);
                     break;
                 case 8:
+                    ArrayList<PremiumUser> premiumUserList = new ArrayList<>();
+                    
+                    double premiumPrice = 1000;
+                    System.out.println("Enter your id: ");
+                    int user_id = scan.nextInt();
+
+                    PremiumUser cur_user = findPremiumUserById(premiumUserList, user_id);
+
+                    if (cur_user != null) {
+                        System.out.println("User selected: " + cur_user.getName());
+                        System.out.println("Premium cost: " + premiumPrice);
+
+                        if (premiumPrice <= cur_user.getBalance()) {
+                            cur_user.setBalance(cur_user.getBalance() - premiumPrice);
+
+                            OnlineShop onlineShop = new OnlineShop();
+                            onlineShop.addPremiumUser(cur_user);
+                        } else {
+                            System.out.println("Not enough balance to make the purchase.");
+                        }
+                    } else {
+                        System.out.println("Premium user not found with the given ID.");
+                    }
+                    break;
+                case 9:
                     System.out.println("Exit in progress...");
                     System.exit(0);
                 default:
@@ -206,6 +233,15 @@ public class Main {
         for (Product product : products) {
             if (product.getId() == productId) {
                 return product;
+            }
+        }
+        return null;
+    }
+
+    private static PremiumUser findPremiumUserById(ArrayList<PremiumUser> premiumUserList, int userId) {
+        for (PremiumUser premiumUser : premiumUserList) {
+            if (premiumUser.getId() == userId) {
+                return premiumUser;
             }
         }
         return null;
