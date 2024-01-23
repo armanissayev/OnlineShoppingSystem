@@ -13,6 +13,7 @@ public class Main {
         System.out.println("--------------------------------------------------");
         System.out.print("\n");
     }
+
     private static void printProducts(ArrayList<Product> products) {
         System.out.println("--------------------------------------------------");
         for (Product value : products) {
@@ -25,6 +26,7 @@ public class Main {
         }
         System.out.print("\n");
     }
+
     private static void printOrders(ArrayList<Order> orders) {
         System.out.println("--------------------------------------------------");
         for (Order value : orders) {
@@ -37,6 +39,7 @@ public class Main {
         System.out.println("--------------------------------------------------");
         System.out.print("\n");
     }
+
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
         int countUserId = 0;
@@ -70,7 +73,7 @@ public class Main {
                     String name = "";
                     do {
                         name = scan.nextLine();
-                    } while(name.isEmpty());
+                    } while (name.isEmpty());
 
                     System.out.print("Enter the price of new product: ");
                     double price = scan.nextDouble();
@@ -78,7 +81,7 @@ public class Main {
                     int quantity = scan.nextInt();
                     System.out.print("Input the description of the product in one line: ");
                     String description = "";
-                    while(description.isEmpty()) {
+                    while (description.isEmpty()) {
                         description = scan.nextLine();
                     }
                     Product product = new Product(++countProductId, name, price, quantity, description);
@@ -130,7 +133,7 @@ public class Main {
                                 selectedProduct.setQuantity(selectedProduct.getQuantity() - quantityToBuy);
                                 currentUser.deductBalance(totalCost);
 
-                                Order order = new Order((int)currentUser.getId(), selectedProduct.getName(), quantityToBuy, totalCost);
+                                Order order = new Order((int) currentUser.getId(), selectedProduct.getName(), quantityToBuy, totalCost);
                                 currentUser.addOrder(order);
                                 orders.add(order);
 
@@ -155,30 +158,30 @@ public class Main {
                     printOrders(orders);
                     break;
                 case 8:
-                    ArrayList<PremiumUser> premiumUserList = new ArrayList<>();
-                    
                     double premiumPrice = 1000;
                     System.out.println("Enter your id: ");
                     int user_id = scan.nextInt();
 
-                    PremiumUser cur_user = findPremiumUserById(premiumUserList, user_id);
-
-                    if (cur_user != null) {
-                        System.out.println("User selected: " + cur_user.getName());
+                    User userToUpgrade = findUserById(userList, user_id);
+                    if (userToUpgrade != null) {
+                        System.out.println("User selected: " + userToUpgrade.getName());
                         System.out.println("Premium cost: " + premiumPrice);
 
-                        if (premiumPrice <= cur_user.getBalance()) {
-                            cur_user.setBalance(cur_user.getBalance() - premiumPrice);
+                        if (premiumPrice <= userToUpgrade.getBalance()) {
+                            userToUpgrade.setBalance(userToUpgrade.getBalance() - premiumPrice);
 
-                            OnlineShop onlineShop = new OnlineShop();
-                            onlineShop.addPremiumUser(cur_user);
+                            // Assuming PremiumUser extends User or you have a way to convert User to PremiumUser
+                            PremiumUser premiumUser = new PremiumUser(userToUpgrade.getId(), userToUpgrade.getName(), userToUpgrade.getBalance());
+                            
+                            System.out.println("User upgraded to Premium!");
                         } else {
                             System.out.println("Not enough balance to make the purchase.");
                         }
                     } else {
-                        System.out.println("Premium user not found with the given ID.");
+                        System.out.println("User not found with the given ID.");
                     }
                     break;
+
                 case 9:
                     System.out.println("Exit in progress...");
                     System.exit(0);
@@ -238,10 +241,10 @@ public class Main {
         return null;
     }
 
-    private static PremiumUser findPremiumUserById(ArrayList<PremiumUser> premiumUserList, int userId) {
-        for (PremiumUser premiumUser : premiumUserList) {
-            if (premiumUser.getId() == userId) {
-                return premiumUser;
+    private static User findUserById(ArrayList<User> userList, int userId) {
+        for (User user : userList) {
+            if (user.getId() == userId) {
+                return user;
             }
         }
         return null;
