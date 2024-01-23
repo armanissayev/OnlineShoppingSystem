@@ -18,7 +18,7 @@ public class User {
     }
 
     //getters and setters
-    public double getId() {
+    public int getId() {
         return id;
     }
     public void setId(int id) {
@@ -53,3 +53,10 @@ public class User {
         setBalance(getBalance() + amount);
     }
 }
+
+class PremiumUser extends User {
+    public PremiumUser(int id, String name, double balance) {
+        super(id, name, balance);
+    }
+}
+
