@@ -106,9 +106,13 @@ public class Main {
                 case 4:
                     System.out.print("Enter your id: ");
                     int userId = scan.nextInt();
-                    userId--;
-
-                    User currentUser = userList.get(userId);
+                    User currentUser = findUserById(userList, userId);
+                    while (currentUser == null) {
+                        System.out.print("User with such ID not found. Enter your id again: ");
+                        userId = scan.nextInt();
+                        userId--;
+                        currentUser = findUserById(userList, userId);
+                    }
 
                     printProducts(products);
 
@@ -155,30 +159,39 @@ public class Main {
                     printUsers(userList);
                     break;
                 case 7:
-                    printOrders(orders);
+                    System.out.print("Enter your id: ");
+                    userId = scan.nextInt();
+                    currentUser = findUserById(userList, userId);
+                    while (currentUser == null) {
+                        System.out.print("User with such ID not found. Enter your id again: ");
+                        userId = scan.nextInt();
+                        userId--;
+                        currentUser = findUserById(userList, userId);
+                    }
+                    printOrders(currentUser.getOrders());
                     break;
                 case 8:
                     double premiumPrice = 1000;
-                    System.out.println("Enter your id: ");
+                    System.out.print("Enter your id: ");
                     int user_id = scan.nextInt();
 
                     User userToUpgrade = findUserById(userList, user_id);
-                    if (userToUpgrade != null) {
-                        System.out.println("User selected: " + userToUpgrade.getName());
-                        System.out.println("Premium cost: " + premiumPrice);
+                    while (userToUpgrade == null) {
+                        System.out.print("User with such ID not found. Enter your id again: ");
+                        user_id = scan.nextInt();
+                        userToUpgrade = findUserById(userList, user_id);
+                    }
+                    System.out.println("User selected: " + userToUpgrade.getName());
+                    System.out.println("Premium cost: " + premiumPrice);
 
-                        if (premiumPrice <= userToUpgrade.getBalance()) {
-                            userToUpgrade.setBalance(userToUpgrade.getBalance() - premiumPrice);
+                    if (premiumPrice <= userToUpgrade.getBalance()) {
+                        userToUpgrade.setBalance(userToUpgrade.getBalance() - premiumPrice);
 
-                            // Assuming PremiumUser extends User or you have a way to convert User to PremiumUser
-                            PremiumUser premiumUser = new PremiumUser(userToUpgrade.getId(), userToUpgrade.getName(), userToUpgrade.getBalance());
-                            
-                            System.out.println("User upgraded to Premium!");
-                        } else {
-                            System.out.println("Not enough balance to make the purchase.");
-                        }
+                        PremiumUser premiumUser = new PremiumUser(userToUpgrade.getId(), userToUpgrade.getName(), userToUpgrade.getBalance());
+
+                        System.out.println("User upgraded to Premium!");
                     } else {
-                        System.out.println("User not found with the given ID.");
+                        System.out.println("Not enough balance to make the purchase.");
                     }
                     break;
 
