@@ -5,11 +5,12 @@ public class Order {
     private double totalSum;
     private Product product;
 
-    public Order(int userId, String productName, int quantity, double totalSum) {
+    public Order(int userId, String productName, int quantity, double totalSum, Product product) {
         this.userId = userId;
         this.productName = productName;
         this.quantity = quantity;
         this.totalSum = totalSum;
+        this.product = product;
     }
 
     public int getUserId() {
@@ -24,6 +25,7 @@ public class Order {
     public double getTotalSum() {
         return totalSum;
     }
+    public Product getProduct() {return product; }
 
     public void setUserId(int userId) {
         this.userId = userId;

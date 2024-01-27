@@ -1,3 +1,6 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Scanner;
@@ -40,7 +43,8 @@ public class Main {
         System.out.print("\n");
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
+//        File myObj = new File("src/input.txt");
         Scanner scan = new Scanner(System.in);
         int countUserId = 0;
         int countProductId = 0;
@@ -85,6 +89,7 @@ public class Main {
                         description = scan.nextLine();
                     }
                     Product product = new Product(++countProductId, name, price, quantity, description);
+                    System.out.printf("ID of this product is %d\n", product.getId());
                     products.add(product);
                     break;
                 case 3:
@@ -101,7 +106,8 @@ public class Main {
                     userList.add(user);
 
                     System.out.println("Checking...");
-                    System.out.println("The new user added successfully!\n\n");
+                    System.out.print("The new user added successfully!\n");
+                    System.out.printf("Your id is %d\n\n", user.getId());
                     break;
                 case 4:
                     System.out.print("Enter your id: ");
@@ -110,7 +116,6 @@ public class Main {
                     while (currentUser == null) {
                         System.out.print("User with such ID not found. Enter your id again: ");
                         userId = scan.nextInt();
-                        userId--;
                         currentUser = findUserById(userList, userId);
                     }
 
@@ -125,35 +130,40 @@ public class Main {
                     Product selectedProduct = findProductById(products, productId);
 
                     //if the product is found
-                    if (selectedProduct != null) {
-                        System.out.println("Product selected: " + selectedProduct.getName());
-                        System.out.println("Enter quantity to buy: ");
-                        int quantityToBuy = scan.nextInt();
 
-                        if (quantityToBuy <= selectedProduct.getQuantity()) {
-                            double totalCost = selectedProduct.getTotalCost(quantityToBuy);
+                    while (selectedProduct == null) {
+                        System.out.println("Enter the product ID: ");
+                        productId = scan.nextInt();
 
-                            if (totalCost <= currentUser.getBalance()) {
-                                selectedProduct.setQuantity(selectedProduct.getQuantity() - quantityToBuy);
-                                currentUser.deductBalance(totalCost);
+                        selectedProduct = findProductById(products, productId);
+                    }
 
-                                Order order = new Order((int) currentUser.getId(), selectedProduct.getName(), quantityToBuy, totalCost);
-                                currentUser.addOrder(order);
-                                orders.add(order);
+                    System.out.println("Product selected: " + selectedProduct.getName());
+                    System.out.println("Enter quantity to buy: ");
+                    int quantityToBuy = scan.nextInt();
 
-                                System.out.println("Purchase successful! Total cost: " + totalCost);
-                            } else {
-                                System.out.println("Not enough balance to make the purchase.");
-                            }
+                    if (quantityToBuy <= selectedProduct.getQuantity()) {
+                        double totalCost = selectedProduct.getTotalCost(quantityToBuy);
+                        totalCost = currentUser.calculate(totalCost);
+
+                        if (totalCost <= currentUser.getBalance()) {
+                            selectedProduct.setQuantity(selectedProduct.getQuantity() - quantityToBuy);
+                            currentUser.deductBalance(totalCost);
+
+                            Order order = new Order((int) currentUser.getId(), selectedProduct.getName(), quantityToBuy, totalCost, selectedProduct);
+                            currentUser.addOrder(order);
+                            orders.add(order);
+
+                            System.out.println("Purchase successful! Total cost: " + totalCost);
                         } else {
-                            System.out.println("Not enough stock available for the selected product.");
+                            System.out.println("Not enough balance to make the purchase.");
                         }
                     } else {
-                        System.out.println("Product not found with the given ID.");
+                        System.out.println("Not enough stock available for the selected product.");
                     }
                     break;
                 case 5:
-                    returnProduct(userList, products, scan);
+                    orders = returnProduct(userList, products, orders, scan);
                     break;
                 case 6:
                     printUsers(userList);
@@ -171,7 +181,7 @@ public class Main {
                     printOrders(currentUser.getOrders());
                     break;
                 case 8:
-                    double premiumPrice = 1000;
+                    double premiumPrice = 10000;
                     System.out.print("Enter your id: ");
                     int user_id = scan.nextInt();
 
@@ -187,7 +197,16 @@ public class Main {
                     if (premiumPrice <= userToUpgrade.getBalance()) {
                         userToUpgrade.setBalance(userToUpgrade.getBalance() - premiumPrice);
 
-                        PremiumUser premiumUser = new PremiumUser(userToUpgrade.getId(), userToUpgrade.getName(), userToUpgrade.getBalance());
+
+
+                        for (int i = 0; i < userList.size(); ++ i) {
+                            User cur = userList.get(i);
+                            if (cur == userToUpgrade) {
+                                PremiumUser premiumUser = new PremiumUser(userToUpgrade.getId(), userToUpgrade.getName(), userToUpgrade.getBalance());
+                                userList.set(i, premiumUser);
+                                break;
+                            }
+                        }
 
                         System.out.println("User upgraded to Premium!");
                     } else {
@@ -203,7 +222,7 @@ public class Main {
             }
             System.out.print("Continue? [Y/N]\n");
             String res = "";
-            while (res.isEmpty()) {
+            while (!Objects.equals(res, "Y") && !Objects.equals(res, "N")) {
                 res = scan.nextLine();
             }
             if (!Objects.equals(res, "Y")) {
@@ -214,35 +233,53 @@ public class Main {
         }
     }
 
-    private static void returnProduct(ArrayList<User> userList, ArrayList<Product> products, Scanner scan) {
-        if (!userList.isEmpty()) {
-            User lastUser = userList.get(userList.size() - 1);
 
-            System.out.println("User: " + lastUser.getName() + ", Balance: " + lastUser.getBalance());
-
-            System.out.print("Enter the product ID to return: ");
-            int productId = scan.nextInt();
-
-            Product selectedProduct = findProductById(products, productId);
-
-            if (selectedProduct != null) {
-                System.out.println("Product selected for return: " + selectedProduct.getName());
-                System.out.print("Enter quantity to return: ");
-                int quantityToReturn = scan.nextInt();
-
-                // Increase the quantity in ArrayList<Product> products
-                selectedProduct.setQuantity(selectedProduct.getQuantity() + quantityToReturn);
-
-                // Adjust user balance or handle refunds if necessary
-                lastUser.returnBalance(selectedProduct.getTotalCost(quantityToReturn));
-
-                System.out.println("Return successful! Quantity returned: " + quantityToReturn);
-            } else {
-                System.out.println("Product not found with the given ID.");
-            }
-        } else {
-            System.out.println("No users available.");
+    private static ArrayList<Order> returnProduct(ArrayList<User> userList, ArrayList<Product> products, ArrayList<Order> orders, Scanner scan) {
+        int userId = 0;
+        System.out.print("Enter your ID: ");
+        userId = scan.nextInt();
+        User user = findUserById(userList, userId);
+        while(user == null) {
+            System.out.print("Enter your ID again: ");
+            userId = scan.nextInt();
+            user = findUserById(userList, userId);
         }
+
+        System.out.println("User: " + user.getName() + ", Balance: " + user.getBalance());
+
+        System.out.print("Enter the product ID to return: ");
+        int productId = scan.nextInt();
+
+        Product selectedProduct = findProductById(products, productId);
+        while(selectedProduct == null) {
+            System.out.print("Not Found! Enter the product ID to return: ");
+            productId = scan.nextInt();
+            selectedProduct = findProductById(products, productId);
+        }
+
+        System.out.println("Product selected for return: " + selectedProduct.getName());
+        System.out.print("Enter quantity to return: ");
+        int quantityToReturn = scan.nextInt();
+
+        // Increase the quantity in ArrayList<Product> products
+        selectedProduct.setQuantity(selectedProduct.getQuantity() + quantityToReturn);
+        for (int i = 0; i < orders.size(); ++ i) {
+            Order order = orders.get(i);
+            if (order.getProductName() == selectedProduct.getName()) {
+                int cur = order.getQuantity();
+                order.setQuantity(cur - quantityToReturn);
+                double sum = order.getTotalSum();
+                order.setTotalSum(sum - quantityToReturn * order.getProduct().getPrice());
+                orders.set(i, order);
+            }
+        }
+        // Adjust user balance or handle refunds if necessary
+        double cost = selectedProduct.getTotalCost(quantityToReturn);
+        cost = user.calculate(cost);
+        user.returnBalance(cost);
+
+        System.out.println("Return successful! Quantity returned: " + quantityToReturn);
+        return orders;
     }
 
     public static Product findProductById(ArrayList<Product> products, int productId) {

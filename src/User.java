@@ -52,11 +52,13 @@ public class User {
         // Assuming you have a method to set the balance in your User class
         setBalance(getBalance() + amount);
     }
+    public double calculate(double price) { return price; }
 }
 
 class PremiumUser extends User {
     public PremiumUser(int id, String name, double balance) {
         super(id, name, balance);
     }
+    public double calculate(double price) { return price * 0.85; }
 }
 
