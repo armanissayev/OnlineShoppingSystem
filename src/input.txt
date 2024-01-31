@@ -9,7 +9,7 @@ Phone
 150
 Cool phone
 3
-ArmanY
+Arman
 400000
 4
 2
